@@ -1,9 +1,6 @@
 import logging
 import asyncio
 import sys
-import socket
-import fcntl
-import struct
 sys.path.insert(0, "..")
 
 from asyncua import ua, Server
@@ -27,13 +24,7 @@ Reg4_val = 0
 Reg5_ID = 1009
 Reg5_val = 0
 
-def get_ip_address(ifname):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915,  # SIOCGIFADDR
-        struct.pack('256s', ifname[:15])
-    )[20:24])
+
 
 
 @uamethod
@@ -46,13 +37,11 @@ async def main():
     #client = ModbusTcpClient('192.168.12.20')
 
     #hostname = socket.gethostname()
-    #IPAddr = socket.gethostbyname(hostname)
-    print("Your Computer IP Address is:" + get_ip_address('wlan0'))
     _logger = logging.getLogger('asyncua')
     # setup our server
     server = Server()
     await server.init()
-    server.set_endpoint('opc.tcp://'+get_ip_address('wlan0')+':4840/server/')
+    server.set_endpoint('opc.tcp://'+'192.168.0.173'+':4840/server/')
 
     # setup our own namespace, not really necessary but should as spec
     uri = 'http://examples.freeopcua.github.io'
